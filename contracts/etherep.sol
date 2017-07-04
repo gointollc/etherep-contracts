@@ -17,6 +17,7 @@ contract Etherep {
 
     /// Events
     event Debug(string message);
+    event DebugUint(uint message);
 
     /**
      * Only a certain address can use this modified method
@@ -90,7 +91,7 @@ contract Etherep {
      * @param rating The rating(0-10)
      * @return success If the rating was processed successfully
      */
-    function rate(address who, uint8 rating) external payable delay requireFee {
+    function rate(address who, uint rating) external payable delay requireFee {
 
         if (rating > 5) {
             if (debug) Debug("Rating out of bounds");
@@ -98,18 +99,17 @@ contract Etherep {
         }
 
         RatingStore store = RatingStore(storageAddress);
-
+        
         // Multiply by 100 so we have a couple decimal places to work with
         uint workRating = rating * 100;
-
+        
         // Get details on sender if available
         uint senderScore;
         uint senderRatings;
         (senderScore, senderRatings) = store.get(msg.sender);
-
+        
         // If they have a score, we'll want to weight it
         if (senderScore != 0) {
-
             // Calculate their cumulative score
             uint senderCumulative = senderScore / (senderRatings * 100);
 
