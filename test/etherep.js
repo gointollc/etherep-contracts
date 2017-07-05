@@ -8,11 +8,32 @@ contract("Etherep", function(accounts) {
     var pat = accounts[3];
     var sam = accounts[4];
 
+    it("should set debug to on", function() {
+
+        var rep;
+
+        return Etherep.deployed().then(function(instance) {
+
+            rep = instance;
+
+            return rep.setDebug(true, {from: manager});
+
+        });
+
+    });
+
     it("should add an unweighted rating of 5 by mary for joe", function() {
 
-        return Etherep.deployed().then(function(rep) {
+        var rep;
 
-            rep.rate(joe, 5, {from: mary, value: 200000000000000});
+        return Etherep.deployed().then(function(instance) {
+
+            rep = instance;
+
+            return rep.rate(joe, 5, {from: mary, value: 200000000000000});
+
+        }).then(function(trans) {
+            
             return rep.getScore(joe);
 
         }).then(function(retval) {
