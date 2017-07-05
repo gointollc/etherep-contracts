@@ -10,7 +10,7 @@ contract RatingStore {
 
     struct Score {
         bool exists;
-        uint cumulativeScore;
+        int cumulativeScore;
         uint totalRatings;
     }
 
@@ -64,7 +64,7 @@ contract RatingStore {
      * @param total Total individual ratings for the address
      * @return success If the set was completed successfully
      */
-    function set(address target, uint cumulative, uint total) external restricted {
+    function set(address target, int cumulative, uint total) external restricted {
         if (!scores[target].exists) {
             scores[target] = Score(true, 0, 0);
         }
@@ -78,7 +78,7 @@ contract RatingStore {
      * @param wScore The weighted rating to add to the score
      * @return success
      */
-    function add(address target, uint wScore) external restricted {
+    function add(address target, int wScore) external restricted {
         if (!scores[target].exists) {
             scores[target] = Score(true, 0, 0);
         }
@@ -92,7 +92,7 @@ contract RatingStore {
      * @return cumulative score
      * @return total ratings
      */
-    function get(address target) external constant returns (uint, uint) {
+    function get(address target) external constant returns (int, uint) {
         return (scores[target].cumulativeScore, scores[target].totalRatings);
     }
 
