@@ -6,6 +6,7 @@ contract("Etherep", function(accounts) {
     var joe = accounts[1];
     var mary = accounts[2];
     var pat = accounts[3];
+    var sam = accounts[4];
 
     it("should add an unweighted rating of 5 by mary for joe", function() {
 
@@ -16,7 +17,7 @@ contract("Etherep", function(accounts) {
 
         }).then(function(retval) {
             
-            assert.equal(parseInt(retval), 5, "score does not appear to have been set");
+            assert.equal(parseInt(retval), 500, "score does not appear to have been set");
 
         });
 
@@ -31,7 +32,24 @@ contract("Etherep", function(accounts) {
 
         }).then(function(retval) {
             
-            assert.equal(parseInt(retval), 5, "score does not appear to have been set");
+            assert.equal(parseInt(retval), 500, "score does not appear to have been set");
+
+        });
+
+    });
+
+    it("joe, sam, and mary should add weighted ratings of 3 to pat", function() {
+
+        return Etherep.deployed().then(function(rep) {
+
+            rep.rate(pat, 3, {from: mary, value: 200000000000000});
+            rep.rate(pat, 3, {from: joe, value: 200000000000000});
+            rep.rate(pat, 3, {from: sam, value: 200000000000000});
+            return rep.getScore(pat);
+
+        }).then(function(score) {
+            
+            assert.isAbove(parseInt(score), 300, "score does not appear to have been weighted");
 
         });
 
