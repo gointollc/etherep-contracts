@@ -16,6 +16,10 @@ contract Etherep {
     mapping (address => uint) internal lastRating;
 
     /// Events
+    event Error(
+        address sender,
+        string message
+    );
     event Debug(string message);
     event DebugInt(int message);
     event DebugUint(uint message);
@@ -31,7 +35,7 @@ contract Etherep {
      */
     modifier onlyBy(address by) { 
         if (msg.sender != by) {
-            if (debug) Debug("Denied");
+            Error(msg.sender, "Denied");
             throw; 
         }
         _; 
@@ -41,8 +45,8 @@ contract Etherep {
      * Delay ratings to be at least waitTime apart
      */
     modifier delay() {
-        if (lastRating[msg.sender] > now - waitTime) {
-            if (debug) Debug("Rating too often");
+        if (!debug && lastRating[msg.sender] > now - waitTime) {
+            Error(msg.sender, "Rating too often");
             throw;
         }
         _;
@@ -53,7 +57,7 @@ contract Etherep {
      */
     modifier requireFee() {
         if (msg.value < fee) {
-            if (debug) Debug("Fee required");
+            Error(msg.sender, "Fee required");
             throw;
         }
         _;
@@ -72,6 +76,14 @@ contract Etherep {
         storageAddress = _storageAddress;
         waitTime = _wait;
         debug = false;
+    }
+
+    /**
+     * Set debug
+     * @param d The debug value that should be set
+     */
+    function setDebug(bool d) external onlyBy(manager) {
+        debug = d;
     }
 
     /**
@@ -100,11 +112,11 @@ contract Etherep {
     function rate(address who, int rating) external payable delay requireFee {
 
         if (rating > 5 || rating < -5) {
-            if (debug) Debug("Out of bounds");
+            Error(msg.sender, "Out of bounds");
             throw;
         }
         if (who == msg.sender) {
-            if (debug) Debug("Self rating");
+            Error(msg.sender, "Self rating");
             throw;
         }
 
@@ -144,6 +156,9 @@ contract Etherep {
         
         // Calculate weighted rating
         int workRating = rating * weight;
+
+        // Set last rating timestamp
+        lastRating[msg.sender] = now;
 
         Rating(msg.sender, who, workRating);
 
