@@ -17,7 +17,13 @@ contract Etherep {
 
     /// Events
     event Debug(string message);
+    event DebugInt(int message);
     event DebugUint(uint message);
+    event Rating(
+        address by, 
+        address who, 
+        int rating
+    );
 
     /**
      * Only a certain address can use this modified method
@@ -91,31 +97,55 @@ contract Etherep {
      * @param rating The rating(0-10)
      * @return success If the rating was processed successfully
      */
-    function rate(address who, uint rating) external payable delay requireFee {
+    function rate(address who, int rating) external payable delay requireFee {
 
-        if (rating > 5) {
-            if (debug) Debug("Rating out of bounds");
+        if (rating > 5 || rating < -5) {
+            if (debug) Debug("Out of bounds");
+            throw;
+        }
+        if (who == msg.sender) {
+            if (debug) Debug("Self rating");
             throw;
         }
 
         RatingStore store = RatingStore(storageAddress);
         
-        // Multiply by 100 so we have a couple decimal places to work with
-        uint workRating = rating * 100;
-        
-        // Get details on sender if available
-        uint senderScore;
-        uint senderRatings;
-        (senderScore, senderRatings) = store.get(msg.sender);
-        
-        // If they have a score, we'll want to weight it
-        if (senderScore != 0) {
-            // Calculate their cumulative score
-            uint senderCumulative = senderScore / (senderRatings * 100);
+        // Starting weight
+        int weight = 0;
 
-            // Calculate the weighted rating
-            workRating = (workRating + senderCumulative) / 5;
+        // Rating multiplier
+        int multiplier = 100;
+
+        // We need the absolute value
+        int absRating = rating;
+        if (absRating < 0) {
+            absRating = -rating;
         }
+
+        // Get details on sender if available
+        int senderScore;
+        uint senderRatings;
+        int senderCumulative = 0;
+        (senderScore, senderRatings) = store.get(msg.sender);
+
+        // Calculate cumulative score if available
+        if (senderScore != 0) {
+            senderCumulative = (senderScore / (int(senderRatings) * 100)) * 100;
+        }
+
+        // Calculate the weight if the sender is rated above 0
+        if (senderCumulative > 0) {
+            weight = (((senderCumulative / 5) * absRating) / 10) + multiplier;
+        }
+        // Otherwise, unweighted
+        else {
+            weight = multiplier;
+        }
+        
+        // Calculate weighted rating
+        int workRating = rating * weight;
+
+        Rating(msg.sender, who, workRating);
 
         // Add the new rating to their score
         store.add(who, workRating);
@@ -127,17 +157,18 @@ contract Etherep {
      * @param who The address to lookup
      * @return score The cumulative score
      */
-    function getScore(address who) external constant returns (uint score) {
+    function getScore(address who) external constant returns (int score) {
 
         RatingStore store = RatingStore(storageAddress);
         
-        uint cumulative;
+        int cumulative;
         uint ratings;
         (cumulative, ratings) = store.get(who);
-
+        DebugInt(cumulative);
+        Debug("Cumulative");
         // The score should have room for 2 decimal places, but ratings is a 
         // single count
-        score = cumulative / (ratings * 100);
+        score = cumulative / int(ratings);
 
     }
 
