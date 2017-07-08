@@ -87,12 +87,27 @@ contract Etherep {
     }
 
     /**
+     * Get debug
+     * @return debug
+     */
+    function getDebug() external constant returns (bool) {
+        return debug;
+    }
+
+    /**
      * Change the manager
      * @param who The address of the new manager
+     */
+    function setManager(address who) external onlyBy(manager) {
+        manager = who;
+    }
+
+    /**
+     * Get the manager
      * @return manager The address of this contract's manager
      */
-    function setManager(address who) external onlyBy(manager) returns (address manager) {
-        manager = who;
+    function getManager() external constant returns (address) {
+        return manager;
     }
 
     /**
@@ -178,6 +193,26 @@ contract Etherep {
         
         int cumulative;
         uint ratings;
+        (cumulative, ratings) = store.get(who);
+        DebugInt(cumulative);
+        Debug("Cumulative");
+        // The score should have room for 2 decimal places, but ratings is a 
+        // single count
+        score = cumulative / int(ratings);
+
+    }
+
+    /**
+     * Returns the cumulative score and count of ratings for an address
+     * @param who The address to lookup
+     * @return score The cumulative score
+     * @return count How many ratings have been made
+     */
+    function getScoreAndCount(address who) external constant returns (int score, uint ratings) {
+
+        RatingStore store = RatingStore(storageAddress);
+        
+        int cumulative;
         (cumulative, ratings) = store.get(who);
         DebugInt(cumulative);
         Debug("Cumulative");
