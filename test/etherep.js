@@ -8,6 +8,28 @@ contract("Etherep", function(accounts) {
     var pat = accounts[3];
     var sam = accounts[4];
 
+    it("should set debug to off", function() {
+
+        var rep;
+
+        return Etherep.deployed().then(function(instance) {
+
+            rep = instance;
+
+            return rep.setDebug(false, {from: manager});
+
+        }).then(function(retval) {
+
+            return rep.getDebug();
+
+        }).then(function(retval) {
+
+            assert.isFalse(retval, "debug should be off");
+
+        });
+
+    });
+
     it("should set debug to on", function() {
 
         var rep;
@@ -17,6 +39,14 @@ contract("Etherep", function(accounts) {
             rep = instance;
 
             return rep.setDebug(true, {from: manager});
+
+        }).then(function(retval) {
+
+            return rep.getDebug();
+
+        }).then(function(retval) {
+
+            assert.isTrue(retval, "debug should be on");
 
         });
 

@@ -7,12 +7,43 @@ function calcScore(cum, tot) {
 
 contract("RatingStore", function(accounts) {
 
+    var manager = accounts[0];
+
+    it("should show manager as account given in constructor", function() {
+
+        return RatingStore.deployed().then(function(instance) {
+
+            return instance.getManager();
+
+        }).then(function(retval) {
+
+            assert.equal(retval, manager, "manager should be the first account");
+
+        });
+
+    });
+
+    /* TODO: something is wrong with the deploy
+    it("should initially show controller as not the manager", function() {
+
+        return RatingStore.deployed().then(function(instance) {
+
+            return instance.getManager();
+
+        }).then(function(retval) {
+
+            assert.notEqual(retval, manager, "manager should not be the first account if deployed correctly");
+
+        });
+
+    });*/
+
     it("should set the manager's score to 5", function() {
 
         return RatingStore.deployed().then(function(instance) {
 
-            instance.set(accounts[0], 500, 1);
-            return instance.get(accounts[0]);
+            instance.set(manager, 500, 1);
+            return instance.get(manager);
 
         }).then(function(retval) {
             
@@ -27,8 +58,8 @@ contract("RatingStore", function(accounts) {
 
         return RatingStore.deployed().then(function(instance) {
 
-            instance.add(accounts[0], 500);
-            return instance.get(accounts[0]);
+            instance.add(manager, 500);
+            return instance.get(manager);
 
         }).then(function(retval) {
             
@@ -45,13 +76,31 @@ contract("RatingStore", function(accounts) {
 
         return RatingStore.deployed().then(function(instance) {
 
-            instance.reset(accounts[0]);
-            return instance.get(accounts[0]);
+            instance.reset(manager);
+            return instance.get(manager);
 
         }).then(function(retval) {
             
             var score = calcScore(retval[0], retval[1]);
             assert.equal(score, 0, "score should show 0 after reset");
+
+        });
+
+    });
+
+    it("should change controller to third account", function() {
+        var store;
+        return RatingStore.deployed().then(function(instance) {
+            store = instance;
+            return store.setController(accounts[2], {from: manager});
+
+        }).then(function(retval) {
+
+            return store.getController();
+
+        }).then(function(retval) {
+
+            assert.equal(retval, accounts[2], "controller should now be the third account");
 
         });
 
@@ -66,7 +115,54 @@ contract("RatingStore", function(accounts) {
 
         }).then(function(retval) {
 
+            // Change manager here, too
+            manager = retval;
+
             assert.equal(retval, accounts[1], "manager should now be the second account");
+
+        });
+
+    });
+
+    it("should set debug to true", function() {
+
+        var store;
+
+        return RatingStore.deployed().then(function(instance) {
+
+            store = instance;
+
+            return store.setDebug(true, { from: manager });
+
+        }).then(function(retval) {
+
+            return store.getDebug();
+
+        }).then(function(retval) {
+
+            assert.isTrue(retval, "debug should be set true");
+
+        });
+
+    });
+
+    it("should set debug to false", function() {
+
+        var store;
+
+        return RatingStore.deployed().then(function(instance) {
+
+            store = instance;
+
+            return store.setDebug(false, { from: manager });
+
+        }).then(function(retval) {
+
+            return store.getDebug();
+
+        }).then(function(retval) {
+
+            assert.isFalse(retval, "debug should be set false");
 
         });
 
