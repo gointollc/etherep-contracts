@@ -1,5 +1,9 @@
 pragma solidity ^0.4.11;
 
+/*  Copyright 2017 GoInto, LLC
+    All Rights Reserved
+*/
+
 import "./ratingstore.sol";
 
 /** Ethereum Reputation
@@ -45,7 +49,7 @@ contract Etherep {
      * Delay ratings to be at least waitTime apart
      */
     modifier delay() {
-        if (!debug && lastRating[msg.sender] > now - waitTime) {
+        if (debug == false && lastRating[msg.sender] > now - waitTime) {
             Error(msg.sender, "Rating too often");
             throw;
         }
