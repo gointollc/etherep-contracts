@@ -1,5 +1,9 @@
 pragma solidity ^0.4.11;
 
+/*  Copyright 2017 GoInto, LLC
+    All Rights Reserved
+*/
+
 /**
  * Storage contract for Etherep to store ratings and score data.  It's been 
  * separated from the main contract because this is much less likely to change
