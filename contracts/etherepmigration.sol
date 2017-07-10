@@ -68,6 +68,11 @@ contract EtherepMigration {
      */
     function setContract(string key, address contractAddress) external onlyManager {
 
+        // Keep the key length down
+        if (bytes(key).length > 32) {
+            throw;
+        }
+
         // Set
         contracts[key] = contractAddress;
 
@@ -82,6 +87,11 @@ contract EtherepMigration {
      * @return contractAddress - The address of the contract
      */
     function getContract(string key) external constant returns (address) {
+
+        // Keep the key length down
+        if (bytes(key).length > 32) {
+            throw;
+        }
 
         // Set
         return contracts[key];
