@@ -1,7 +1,7 @@
 # etherep-contracts
 Ethereum smart contracts for etherep
 
-## Usage
+## Public Usage
 
 ### GointoMigration
 
@@ -16,11 +16,62 @@ To get the addresses, you can use `GointoMigration.getContract` like this:
 
 ### Etherep
 
-TBD
+Get an instance of the contract for function calls
+
+    var etherepABI = var etherepABI = [{"constant":false,"inputs":[{"name":"d","type":"bool"}],"name":"setDebug","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[],"name":"drain","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"who","type":"address"}],"name":"getScoreAndCount","outputs":[{"name":"score","type":"int256"},{"name":"ratings","type":"uint256"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"who","type":"address"}],"name":"setManager","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getDebug","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"who","type":"address"}],"name":"getScore","outputs":[{"name":"score","type":"int256"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"getManager","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"who","type":"address"},{"name":"rating","type":"int256"}],"name":"rate","outputs":[],"payable":true,"type":"function"},{"inputs":[{"name":"_manager","type":"address"},{"name":"_fee","type":"uint256"},{"name":"_storageAddress","type":"address"},{"name":"_wait","type":"uint256"}],"payable":false,"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"sender","type":"address"},{"indexed":false,"name":"message","type":"string"}],"name":"Error","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"message","type":"string"}],"name":"Debug","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"message","type":"int256"}],"name":"DebugInt","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"message","type":"uint256"}],"name":"DebugUint","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"by","type":"address"},{"indexed":false,"name":"who","type":"address"},{"indexed":false,"name":"rating","type":"int256"}],"name":"Rating","type":"event"}];
+
+    // Use the address you got from the migration contract
+    var rep = web3.eth.contract(etherepABI).at(etherepAddress);
+
+#### getManager()
+
+Return the manager's address for the contract.
+
+    rep.getManager()
+
+#### rate(address, int)
+
+Rate another address on a scale of -5(awful) to 5(great).
+
+    rep.rate("0x123deadbeef456...", 3, { gas: 100000 })
+
+#### getScore(address)
+
+Get the cumulative score for an address.  The score that is returned is a 3 digit integer but can be considered a float with two decimal places.
+
+    rep.getScore("0x123deadbeef456...")
+
+#### getScoreAndCount(address)
+
+Get the cumulative score and the total count of ratings for an address.  This call returns an integer and an unsigned integer tuple.
+
+    rep.getScore("0x123deadbeef456...")
 
 ### RatingStore
 
-TBD
+#### get(address)
+
+Return cumulative score and count of ratings for an address.
+
+    store.get("0x123deadbeef456...")
+
+#### getManager()
+
+Get the managing account of the contract.
+
+    store.getManager()
+
+#### getController()
+
+Get the controller address for the contract.  The Controller is the address that has the rights to make write calls to the contract.  This should always be the address of the current Etherep contract.
+
+    store.getManager()
+
+#### getDebug()
+
+Whether or not debug is turned on.  This usually causes debug events to fire for... well, debugging purposes.
+
+    store.getDebug()
 
 ## Deploying With a Web3 Javascript API
 
