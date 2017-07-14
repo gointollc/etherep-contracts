@@ -23,7 +23,7 @@ contract("Etherep", function(accounts) {
 
     });
 
-    it("ethrep should not accept a rating of above 5", function() {
+    it("should not accept a rating of above 5", function() {
 
         return Etherep.deployed().then(function(rep) {
 
@@ -37,7 +37,7 @@ contract("Etherep", function(accounts) {
 
     });
 
-    it("ethrep should not accept a rating of below -5", function() {
+    it("should not accept a rating of below -5", function() {
 
         return Etherep.deployed().then(function(rep) {
 
@@ -51,7 +51,7 @@ contract("Etherep", function(accounts) {
 
     });
 
-    it("ethrep should not allow draining from a non-manager account", function() {
+    it("should not allow draining from a non-manager account", function() {
 
         return Etherep.deployed().then(function(rep) {
 
@@ -65,7 +65,7 @@ contract("Etherep", function(accounts) {
 
     });
 
-    it("ethrep should not allow manager to be set from a non-manager account", function() {
+    it("should not allow manager to be set from a non-manager account", function() {
 
         return Etherep.deployed().then(function(rep) {
 
@@ -79,7 +79,7 @@ contract("Etherep", function(accounts) {
 
     });
 
-    it("ethrep should not allow back to back ratings", function() {
+    it("should not allow back to back ratings", function() {
 
         var rep;
 
@@ -96,6 +96,34 @@ contract("Etherep", function(accounts) {
         })
         .then(function(trans) {
             return rep.rate(joe, 3, {from: sam, value: fee});
+        })
+        .then(assert.fail)
+        .catch(function(err) {
+            assert(err.message.indexOf('invalid opcode') >= 0, err);
+        });
+
+    });
+
+    it("should not allow an unprivileged user to change the delay", function() {
+
+        return Etherep.deployed().then(function(rep) {
+
+            return rep.setDelay(60, {from: joe});
+
+        })
+        .then(assert.fail)
+        .catch(function(err) {
+            assert(err.message.indexOf('invalid opcode') >= 0, err);
+        });
+
+    });
+
+    it("should not allow an unprivileged user to change the fee", function() {
+
+        return Etherep.deployed().then(function(rep) {
+
+            return rep.setFee(fee, {from: joe});
+
         })
         .then(assert.fail)
         .catch(function(err) {

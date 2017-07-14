@@ -2,6 +2,7 @@ var Etherep = artifacts.require("Etherep");
 
 contract("Etherep", function(accounts) {
 
+    var fee = 200000000000000;
     var manager = accounts[0];
     var joe = accounts[1];
     var mary = accounts[2];
@@ -101,6 +102,50 @@ contract("Etherep", function(accounts) {
         }).then(function(score) {
             
             assert.isAbove(parseInt(score), 300, "score does not appear to have been weighted");
+
+        });
+
+    });
+
+    it("should change fee to twice the original", function() {
+
+        var rep;
+
+        return Etherep.deployed().then(function(instance) {
+
+            rep = instance;
+
+            return rep.setFee(fee * 2, {from: manager});
+
+        }).then(function(trans) {
+
+            return rep.getFee();
+
+        }).then(function(retval) {
+            
+            assert.equal(parseInt(retval), fee * 2, "fee does not appear to have been changed");
+
+        });
+
+    });
+
+    it("should set rating delay to 1 hour", function() {
+
+        var rep;
+
+        return Etherep.deployed().then(function(instance) {
+
+            rep = instance;
+
+            return rep.setDelay(3600, {from: manager});
+
+        }).then(function(trans) {
+
+            return rep.getDelay();
+
+        }).then(function(retval) {
+            
+            assert.equal(parseInt(retval), 3600, "delay does not appear to have been changed");
 
         });
 

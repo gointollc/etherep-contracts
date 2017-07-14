@@ -110,6 +110,38 @@ contract Etherep {
     }
 
     /**
+     * Change the fee
+     * @param newFee New rating fee
+     */
+    function setFee(uint newFee) external onlyBy(manager) {
+        fee = newFee;
+    }
+
+    /**
+     * Get the fee
+     * @return fee The current fee in Wei
+     */
+    function getFee() external constant returns (uint) {
+        return fee;
+    }
+
+    /**
+     * Change the rating delay
+     * @param delay Delay in seconds
+     */
+    function setDelay(uint delay) external onlyBy(manager) {
+        waitTime = delay;
+    }
+
+    /**
+     * Get the delay time
+     * @return fee The current fee in Wei
+     */
+    function getDelay() external constant returns (uint) {
+        return waitTime;
+    }
+
+    /**
      * Change the manager
      * @param who The address of the new manager
      */
