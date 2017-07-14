@@ -245,8 +245,7 @@ contract Etherep {
         int cumulative;
         uint ratings;
         (cumulative, ratings) = store.get(who);
-        DebugInt(cumulative);
-        Debug("Cumulative");
+        
         // The score should have room for 2 decimal places, but ratings is a 
         // single count
         score = cumulative / int(ratings);
@@ -265,8 +264,7 @@ contract Etherep {
         
         int cumulative;
         (cumulative, ratings) = store.get(who);
-        DebugInt(cumulative);
-        Debug("Cumulative");
+        
         // The score should have room for 2 decimal places, but ratings is a 
         // single count
         score = cumulative / int(ratings);
