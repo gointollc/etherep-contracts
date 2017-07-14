@@ -43,6 +43,8 @@ contract Etherep {
         address who, 
         int rating
     );
+    event FeeChanged(uint f);
+    event DelayChanged(uint d);
 
     /**
      * Only a certain address can use this modified method
@@ -111,10 +113,11 @@ contract Etherep {
 
     /**
      * Change the fee
-     * @param newFee New rating fee
+     * @param newFee New rating fee in Wei
      */
     function setFee(uint newFee) external onlyBy(manager) {
         fee = newFee;
+        FeeChanged(fee);
     }
 
     /**
@@ -131,11 +134,12 @@ contract Etherep {
      */
     function setDelay(uint delay) external onlyBy(manager) {
         waitTime = delay;
+        DelayChanged(waitTime);
     }
 
     /**
      * Get the delay time
-     * @return fee The current fee in Wei
+     * @return delay The current rating delay time in seconds
      */
     function getDelay() external constant returns (uint) {
         return waitTime;
