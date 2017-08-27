@@ -4,7 +4,7 @@ node_js:
 
 before_install:
   - npm install -g ethereumjs-testrpc truffle
-  - npm install solidity-coverage
+  - npm install solidity-coverage node-coveralls
   - testrpc -a5 &
 
 script:
@@ -12,3 +12,6 @@ script:
 
 after_install:
   - killall testrpc
+
+after_success:
+  - coveralls.js coverage.json
