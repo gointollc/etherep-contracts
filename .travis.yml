@@ -1,0 +1,14 @@
+language: javascript
+node_js:
+  - 0.8
+
+before_install:
+  - npm install -g ethereumjs-testrpc truffle
+  - npm install solidity-coverage
+  - testrpc -a5 &
+
+script:
+  - ./node_modules/.bin/solidity-coverage
+
+after_install:
+  - killall testrpc
