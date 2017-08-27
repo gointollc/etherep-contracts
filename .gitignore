@@ -1,0 +1,5 @@
+coverage.json
+coverage
+node_modules
+deploy_info.txt
+build
