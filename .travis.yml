@@ -14,4 +14,4 @@ after_install:
   - killall testrpc
 
 after_success:
-  - coveralls.js coverage.json
+  - ./node_modules/.bin/coveralls coverage.json
