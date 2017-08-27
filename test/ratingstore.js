@@ -23,27 +23,18 @@ contract("RatingStore", function(accounts) {
 
     });
 
-    /* TODO: something is wrong with the deploy
-    it("should initially show controller as not the manager", function() {
+    it("should set the manager's score to 5", function() {
+
+        var store;
 
         return RatingStore.deployed().then(function(instance) {
-
-            return instance.getManager();
+            
+            store = instance;
+            return store.set(manager, 500, 1, {gas: 160000});
 
         }).then(function(retval) {
 
-            assert.notEqual(retval, manager, "manager should not be the first account if deployed correctly");
-
-        });
-
-    });*/
-
-    it("should set the manager's score to 5", function() {
-
-        return RatingStore.deployed().then(function(instance) {
-
-            instance.set(manager, 500, 1);
-            return instance.get(manager);
+            return store.get(manager);
 
         }).then(function(retval) {
             
@@ -56,10 +47,16 @@ contract("RatingStore", function(accounts) {
 
     it("should add a new unweighted rating of 5", function() {
 
+        var store;
+
         return RatingStore.deployed().then(function(instance) {
 
-            instance.add(manager, 500);
-            return instance.get(manager);
+            store = instance;
+            return store.add(manager, 500);
+
+        }).then(function(retval) {
+
+            return store.get(manager);
 
         }).then(function(retval) {
             
@@ -74,10 +71,16 @@ contract("RatingStore", function(accounts) {
 
     it("should reset the manager's score to 0", function() {
 
+        var store;
+
         return RatingStore.deployed().then(function(instance) {
 
-            instance.reset(manager);
-            return instance.get(manager);
+            store = instance;
+            return store.reset(manager);
+
+        }).then(function(retval) {
+
+            return store.get(manager);
 
         }).then(function(retval) {
             
@@ -108,10 +111,16 @@ contract("RatingStore", function(accounts) {
 
     it("should change manager to second account", function() {
 
+        var store;
+
         return RatingStore.deployed().then(function(instance) {
 
-            instance.setManager(accounts[1]);
-            return instance.getManager();
+            store = instance;
+            return store.setManager(accounts[1]);
+
+        }).then(function(retval) {
+
+            return store.getManager();
 
         }).then(function(retval) {
 

@@ -60,8 +60,11 @@ contract("Etherep", function(accounts) {
         return Etherep.deployed().then(function(instance) {
 
             rep = instance;
+            return rep.getFee();
 
-            return rep.rate(joe, 5, {from: mary, value: 200000000000000});
+        }).then(function(trans) {
+            
+            return rep.rate(joe, 5, {from: mary, value: fee, gas: 200000});
 
         }).then(function(trans) {
             
@@ -77,9 +80,16 @@ contract("Etherep", function(accounts) {
 
     it("should add an unweighted rating of 5 by pat for mary", function() {
 
-        return Etherep.deployed().then(function(rep) {
+        var rep;
 
-            rep.rate(mary, 5, {from: pat, value: 200000000000000});
+        return Etherep.deployed().then(function(instance) {
+
+            rep = instance;
+
+            return rep.rate(mary, 5, {from: pat, value: fee});
+
+        }).then(function(trans) {
+            
             return rep.getScore(mary);
 
         }).then(function(retval) {
@@ -92,11 +102,25 @@ contract("Etherep", function(accounts) {
 
     it("joe, sam, and mary should add weighted ratings of 3 to pat", function() {
 
-        return Etherep.deployed().then(function(rep) {
+        var rep;
 
-            rep.rate(pat, 3, {from: mary, value: 200000000000000});
-            rep.rate(pat, 3, {from: joe, value: 200000000000000});
-            rep.rate(pat, 3, {from: sam, value: 200000000000000});
+        return Etherep.deployed().then(function(instance) {
+
+            rep = instance;
+
+            return rep.rate(pat, 3, {from: mary, value: fee});
+            
+
+        }).then(function(trans) {
+            
+            return rep.rate(pat, 3, {from: joe, value: fee});
+            
+        }).then(function(trans) {
+            
+            return rep.rate(pat, 3, {from: sam, value: fee});
+            
+        }).then(function(trans) {
+            
             return rep.getScore(pat);
 
         }).then(function(score) {
