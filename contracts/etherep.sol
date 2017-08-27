@@ -51,10 +51,7 @@ contract Etherep {
      * @param by The address that can use the method
      */
     modifier onlyBy(address by) { 
-        if (msg.sender != by) {
-            Error(msg.sender, "Denied");
-            throw; 
-        }
+        require(msg.sender == by);
         _; 
     }
 
@@ -64,7 +61,7 @@ contract Etherep {
     modifier delay() {
         if (debug == false && lastRating[msg.sender] > now - waitTime) {
             Error(msg.sender, "Rating too often");
-            throw;
+            revert();
         }
         _;
     }
@@ -73,10 +70,7 @@ contract Etherep {
      * Require the minimum fee to be met
      */
     modifier requireFee() {
-        if (msg.value < fee) {
-            Error(msg.sender, "Fee required");
-            throw;
-        }
+        require(msg.value >= fee);
         _;
     }
 
@@ -130,10 +124,10 @@ contract Etherep {
 
     /**
      * Change the rating delay
-     * @param delay Delay in seconds
+     * @param _delay Delay in seconds
      */
-    function setDelay(uint delay) external onlyBy(manager) {
-        waitTime = delay;
+    function setDelay(uint _delay) external onlyBy(manager) {
+        waitTime = _delay;
         DelayChanged(waitTime);
     }
 
@@ -172,19 +166,13 @@ contract Etherep {
     /** 
      * Adds a rating to an address' cumulative score
      * @param who The address that is being rated
-     * @param rating The rating(0-10)
+     * @param rating The rating(-5 to 5)
      * @return success If the rating was processed successfully
      */
     function rate(address who, int rating) external payable delay requireFee {
 
-        if (rating > 5 || rating < -5) {
-            Error(msg.sender, "Out of bounds");
-            throw;
-        }
-        if (who == msg.sender) {
-            Error(msg.sender, "Self rating");
-            throw;
-        }
+        require(rating <= 5 && rating >= -5);
+        require(who != msg.sender);
 
         RatingStore store = RatingStore(storageAddress);
         

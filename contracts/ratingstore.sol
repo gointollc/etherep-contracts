@@ -43,9 +43,7 @@ contract RatingStore {
      * Only the manager or controller can use this method
      */
     modifier restricted() { 
-        if (msg.sender != manager && tx.origin != manager && msg.sender != controller) {
-            throw; 
-        }
+        require(msg.sender == manager || tx.origin == manager || msg.sender == controller);
         _; 
     }
 
@@ -54,10 +52,7 @@ contract RatingStore {
      * @param by The address that can use the method
      */
     modifier onlyBy(address by) { 
-        if (msg.sender != by) {
-            if (debug) Debug("Denied");
-            throw; 
-        }
+        require(msg.sender == by);
         _; 
     }
 

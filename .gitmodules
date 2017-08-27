@@ -1,0 +1,3 @@
+[submodule "lib/GointoMigration"]
+	path = lib/GointoMigration
+	url = git@github.com:gointollc/GointoMigration.git
