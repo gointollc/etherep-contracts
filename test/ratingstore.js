@@ -23,6 +23,24 @@ contract("RatingStore", function(accounts) {
 
     });
 
+    it("get of an unrated address should return 0", function() {
+
+        var store;
+
+        return RatingStore.deployed().then(function(instance) {
+            
+            store = instance;
+            return store.get(manager);
+
+        }).then(function(retval) {
+            
+            assert.equal(retval[0], 0, "did not return 0");
+            assert.equal(retval[1], 0, "did not return 0");
+
+        });
+
+    });
+
     it("should set the manager's score to 4", function() {
 
         var store;

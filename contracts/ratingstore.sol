@@ -103,7 +103,11 @@ contract RatingStore {
      * @return total ratings
      */
     function get(address target) external constant returns (int, uint) {
-        return (scores[target].cumulativeScore, scores[target].totalRatings);
+        if (scores[target].exists == true) {
+            return (scores[target].cumulativeScore, scores[target].totalRatings);
+        } else {
+            return (0,0);
+        }
     }
 
     /**
