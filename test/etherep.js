@@ -78,6 +78,7 @@ contract("Etherep", function(accounts) {
 
     });
 
+    /* NOTE: This is the only test to use getScoreAndCount */
     it("should add an unweighted negative rating of -5 by mary for sam", function() {
 
         var rep;
@@ -93,11 +94,11 @@ contract("Etherep", function(accounts) {
 
         }).then(function(trans) {
             
-            return rep.getScore(sam);
+            return rep.getScoreAndCount(sam);
 
         }).then(function(retval) {
             
-            assert.equal(parseInt(retval), -500, "score does not appear to have been set");
+            assert.equal(parseInt(retval[0]), -500, "score does not appear to have been set");
 
         });
 
