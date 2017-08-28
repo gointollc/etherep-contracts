@@ -3,15 +3,15 @@ node_js:
   - 0.8
 
 before_install:
-  - npm install -g ethereumjs-testrpc truffle
-  - npm install solidity-coverage coveralls
-  - testrpc -a5 &
+  - npme i -g ethereumjs-testrpc truffle
+  - npm i 
+
+before_script:
+  - ./node_modules/.bin/testrpc -a5 &
 
 script:
-  - ./node_modules/.bin/solidity-coverage
+  - npm test
 
-after_install:
+after_script:
   - killall testrpc
-
-after_success:
-  - ./node_modules/.bin/coveralls coverage.json
+  - npm run coverage && cat coverage/lcov.info | coveralls
