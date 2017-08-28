@@ -1,4 +1,6 @@
 # etherep-contracts
+[![Build Status](https://travis-ci.org/gointollc/etherep-contracts.svg?branch=master)](https://travis-ci.org/gointollc/etherep-contracts) [![Coverage Status](https://coveralls.io/repos/github/gointollc/etherep-contracts/badge.svg?branch=master)](https://coveralls.io/github/gointollc/etherep-contracts?branch=master)
+
 Ethereum smart contracts for etherep
 
 ## Public Usage
