@@ -23,7 +23,29 @@ contract("RatingStore", function(accounts) {
 
     });
 
-    it("should set the manager's score to 5", function() {
+    it("should set the manager's score to 4", function() {
+
+        var store;
+
+        return RatingStore.deployed().then(function(instance) {
+            
+            store = instance;
+            return store.set(manager, 400, 1, {gas: 160000});
+
+        }).then(function(retval) {
+
+            return store.get(manager);
+
+        }).then(function(retval) {
+            
+            var score = calcScore(retval[0], retval[1]);
+            assert.equal(score, 4, "set did not set 4");
+
+        });
+
+    });
+
+    it("should set the manager's score to 5 after already being set", function() {
 
         var store;
 
