@@ -78,6 +78,31 @@ contract("Etherep", function(accounts) {
 
     });
 
+    it("should add an unweighted negative rating of -5 by mary for sam", function() {
+
+        var rep;
+
+        return Etherep.deployed().then(function(instance) {
+
+            rep = instance;
+            return rep.getFee();
+
+        }).then(function(trans) {
+            
+            return rep.rate(sam, -5, {from: mary, value: fee, gas: 200000});
+
+        }).then(function(trans) {
+            
+            return rep.getScore(sam);
+
+        }).then(function(retval) {
+            
+            assert.equal(parseInt(retval), -500, "score does not appear to have been set");
+
+        });
+
+    });
+
     it("should add an unweighted rating of 5 by pat for mary", function() {
 
         var rep;
@@ -170,6 +195,70 @@ contract("Etherep", function(accounts) {
         }).then(function(retval) {
             
             assert.equal(parseInt(retval), 3600, "delay does not appear to have been changed");
+
+        });
+
+    });
+
+    it("should set manager to pat", function() {
+
+        var rep;
+
+        return Etherep.deployed().then(function(instance) {
+
+            rep = instance;
+
+            return rep.setManager(pat, {from: manager});
+
+        }).then(function(trans) {
+
+            return rep.getManager();
+
+        }).then(function(retval) {
+            
+            assert.equal(retval, pat, "new manager should be pat");
+            manager = pat;
+
+        });
+
+    });
+
+    it("should drain the contract of fees to manager", function() {
+
+        var rep;
+
+        var managerInitial = 0;
+        var managerFinal = 0;
+        var gasUsed = 0;
+
+        return Etherep.deployed().then(function(instance) {
+
+            rep = instance;
+
+            return web3.eth.getBalance(manager, function(err, res) {
+                managerInitial = res;
+            });
+
+        }).then(function(trans) {
+
+            return rep.drain({from: manager, gas: 150000});
+
+        }).then(function(trans) {
+            
+            // based on default gasPrice listed here: 
+            // http://truffleframework.com/docs/advanced/configuration
+            gasFees = trans.receipt.gasUsed * 100000000000;
+            
+            return web3.eth.getBalance(Etherep.address, function(err, res) {
+                assert.equal(0, res, "contract should have 0 balance");
+            });
+
+        }).then(function(retval) {
+
+            return web3.eth.getBalance(manager, function(err, res) {
+                managerFinal = parseInt(res);
+                assert.isAbove(managerFinal, managerInitial - gasFees, "manager should have a higher balance");
+            });
 
         });
 

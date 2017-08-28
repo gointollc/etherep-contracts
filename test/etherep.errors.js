@@ -51,6 +51,34 @@ contract("Etherep", function(accounts) {
 
     });
 
+    it("should not accept a rating with a low fee", function() {
+
+        return Etherep.deployed().then(function(rep) {
+
+            return rep.rate(joe, -6, {from: joe, value: parseInt(fee - (fee * 0.5))});
+
+        })
+        .then(assert.fail)
+        .catch(function(err) {
+            assert(err.message.indexOf('invalid opcode') >= 0, err);
+        });
+
+    });
+
+    it("should not accept a rating with no fee", function() {
+
+        return Etherep.deployed().then(function(rep) {
+
+            return rep.rate(joe, -6, {from: joe});
+
+        })
+        .then(assert.fail)
+        .catch(function(err) {
+            assert(err.message.indexOf('invalid opcode') >= 0, err);
+        });
+
+    });
+
     it("should not allow draining from a non-manager account", function() {
 
         return Etherep.deployed().then(function(rep) {
