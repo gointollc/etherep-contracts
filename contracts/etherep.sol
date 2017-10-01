@@ -60,7 +60,6 @@ contract Etherep {
      */
     modifier delay() {
         if (debug == false && lastRating[msg.sender] > now - waitTime) {
-            Error(msg.sender, "Rating too often");
             revert();
         }
         _;
