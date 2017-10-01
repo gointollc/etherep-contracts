@@ -175,6 +175,28 @@ contract("Etherep", function(accounts) {
 
     });
 
+    it("joe should add weighted rating to mary but she should return no more than a score of 5", function() {
+
+        var rep;
+
+        return Etherep.deployed().then(function(instance) {
+
+            rep = instance;
+            
+            return rep.rate(mary, 5, {from: joe, value: fee});
+            
+        }).then(function(trans) {
+            
+            return rep.getScore(mary);
+
+        }).then(function(score) {
+            
+            assert.equal(parseInt(score), 500, "score should be 500");
+
+        });
+
+    });
+
     it("should change fee to twice the original", function() {
 
         var rep;

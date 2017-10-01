@@ -248,6 +248,14 @@ contract Etherep {
         // single count
         score = cumulative / int(ratings);
 
+        // We only want to display a maximum of 500 or minimum of -500, even 
+        // if it's weighted outside of that range
+        if (score > 500) {
+            score = 500;
+        } else if (score < -500) {
+            score = -500;
+        }
+
     }
 
     /**
