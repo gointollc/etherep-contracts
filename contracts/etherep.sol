@@ -217,8 +217,8 @@ contract Etherep {
         // Calculate the weight if the sender has a positive rating
         if (senderCumulative > 0 && absRating != 0) {
 
-            // Getting a weight to add to the final rating calculation.  Only 
-            // raters who have a positive cumulative score with have any extra 
+            // Calculate a weight to add to the final rating calculation.  Only 
+            // raters who have a positive cumulative score will have any extra 
             // weight.  Final weight should be between 40 and 100 and scale down
             // depending on how strong the rating is.
             weight = (senderCumulative + absRating) / 10;
