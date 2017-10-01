@@ -126,7 +126,7 @@ contract("Etherep", function(accounts) {
 
     });
 
-    it("mary should add weighted rating of 3 to pat equallying 3.8", function() {
+    it("mary should add weighted rating of 3 to pat equaling 3.8", function() {
 
         var rep;
 
