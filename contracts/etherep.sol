@@ -17,9 +17,18 @@ pragma solidity ^0.4.11;
 
 import "./ratingstore.sol";
 
-/** Ethereum Reputation
+/** Etherep - Simple Ethereum reputation by address
 
-    Contract that takes ratings and calculates a reputation score
+    Contract that takes ratings and calculates a reputation score.  It uses the 
+    RatingStore contract as its data storage.
+
+    Ratings can be from -5(worst) to 5(best) and are weighted according to the 
+    score of the rater. This weight can have a significant skewing towards the
+    positive or negative but the representative score can not be below -5 or 
+    above 5.  Raters can not rate more often than waitTime, nor can they rate 
+    themselves.
+
+    Scores are returned as a false-float, where 425 = 4.25 on the Etherep scale.
  */
 contract Etherep {
 
@@ -170,9 +179,13 @@ contract Etherep {
      */
     function rate(address who, int rating) external payable delay requireFee {
 
+        // Check rating for sanity
         require(rating <= 5 && rating >= -5);
+
+        // A rater can not rate himself
         require(who != msg.sender);
 
+        // Get an instance of the RatingStore contract
         RatingStore store = RatingStore(storageAddress);
         
         // Standard weight
@@ -223,6 +236,7 @@ contract Etherep {
         // Set last rating timestamp
         lastRating[msg.sender] = now;
 
+        // Send event of the rating
         Rating(msg.sender, who, workRating);
 
         // Add the new rating to their score
@@ -237,14 +251,16 @@ contract Etherep {
      */
     function getScore(address who) external constant returns (int score) {
 
+        // Get an instance of our storage contract: RatingStore
         RatingStore store = RatingStore(storageAddress);
         
         int cumulative;
         uint ratings;
+
+        // Get the raw scores from RatingStore
         (cumulative, ratings) = store.get(who);
         
-        // The score should have room for 2 decimal places, but ratings is a 
-        // single count
+        // Calculate the score as a false-float as an average of all ratings
         score = cumulative / int(ratings);
 
         // We only want to display a maximum of 500 or minimum of -500, even 
@@ -265,9 +281,12 @@ contract Etherep {
      */
     function getScoreAndCount(address who) external constant returns (int score, uint ratings) {
 
+        // Get an instance of our storage contract: RatingStore
         RatingStore store = RatingStore(storageAddress);
         
         int cumulative;
+
+        // Get the raw scores from RatingStore
         (cumulative, ratings) = store.get(who);
         
         // The score should have room for 2 decimal places, but ratings is a 
