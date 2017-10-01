@@ -176,16 +176,18 @@ contract Etherep {
 
         RatingStore store = RatingStore(storageAddress);
         
-        // Starting weight
+        // Standard weight
         int weight = 0;
 
-        // Rating multiplier
-        int multiplier = 100;
+        // Convert rating into a fake-float
+        int workRating = rating * 100;
 
         // We need the absolute value
-        int absRating = rating;
-        if (absRating < 0) {
-            absRating = -rating;
+        int absRating;
+        if (rating >= 0) {
+            absRating = workRating;
+        } else {
+            absRating = -workRating;
         }
 
         // Get details on sender if available
@@ -194,22 +196,30 @@ contract Etherep {
         int senderCumulative = 0;
         (senderScore, senderRatings) = store.get(msg.sender);
 
-        // Calculate cumulative score if available
+        // Calculate cumulative score if available for use in weighting. We're 
+        // acting as-if the two right-most places are decimals
         if (senderScore != 0) {
             senderCumulative = (senderScore / (int(senderRatings) * 100)) * 100;
         }
 
-        // Calculate the weight if the sender is rated above 0
-        if (senderCumulative > 0) {
-            weight = (((senderCumulative / 5) * absRating) / 10) + multiplier;
-        }
-        // Otherwise, unweighted
-        else {
-            weight = multiplier;
+        // Calculate the weight if the sender has a positive rating
+        if (senderCumulative > 0 && absRating != 0) {
+
+            // Getting a weight to add to the final rating calculation.  Only 
+            // raters who have a positive cumulative score with have any extra 
+            // weight.  Final weight should be between 40 and 100 and scale down
+            // depending on how strong the rating is.
+            weight = (senderCumulative + absRating) / 10;
+
+            // We need the final weight to be signed the same as the rating
+            if (rating < 0) {
+                weight = -weight;
+            }
+
         }
         
-        // Calculate weighted rating
-        int workRating = rating * weight;
+        // Add the weight to the rating
+        workRating += weight;
 
         // Set last rating timestamp
         lastRating[msg.sender] = now;

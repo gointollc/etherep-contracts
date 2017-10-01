@@ -126,7 +126,7 @@ contract("Etherep", function(accounts) {
 
     });
 
-    it("joe, sam, and mary should add weighted ratings of 3 to pat", function() {
+    it("mary should add weighted rating of 3 to pat equallying 3.8", function() {
 
         var rep;
 
@@ -138,6 +138,24 @@ contract("Etherep", function(accounts) {
             
 
         }).then(function(trans) {
+            
+            return rep.getScore(pat);
+
+        }).then(function(score) {
+            
+            assert.equal(parseInt(score), 380, "score should be exactly 380 weight weight");
+
+        });
+
+    });
+
+    it("joe and sam should add weighted ratings of 3 to pat", function() {
+
+        var rep;
+
+        return Etherep.deployed().then(function(instance) {
+
+            rep = instance;
             
             return rep.rate(pat, 3, {from: joe, value: fee});
             
