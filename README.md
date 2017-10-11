@@ -143,7 +143,7 @@ GointoMigration contract should be notified of the new contract addresses
     var migrationABI = [{"constant":false,"inputs":[{"name":"key","type":"string"},{"name":"contractAddress","type":"address"}],"name":"setContract","outputs":[],"payable":false,"type":"function"}];
 
     // Get migration contract instance
-    var contractMigrate = web3.eth.contract(migrationABI).at("0x123deadbeef456...");
+    var migrate = web3.eth.contract(migrationABI).at("0x123deadbeef456...");
 
     // Set contract addresses in the migration contract
     var setTrans = migrate.setContract("etherep", rep.address, {from: manager, gas: 60000});
